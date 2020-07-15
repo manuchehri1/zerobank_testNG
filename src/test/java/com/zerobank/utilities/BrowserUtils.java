@@ -9,6 +9,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -72,24 +73,32 @@ public class BrowserUtils {
     public static void scrollTo(WebElement element) {
         ((JavascriptExecutor) Driver.getDriver()).executeScript("arguments[0].scrollIntoView(true);", element);
     }
+    public static void takeScreenshot(){
+        //  since our reference type  web driver is
+        TakesScreenshot takesScreenshot = (TakesScreenshot) Driver.getDriver();
+        byte[] screenshot = takesScreenshot.getScreenshotAs(OutputType.BYTES);
+        Date date = new Date();
+        String path = System.getProperty("user.dir") + File.separator + "screenshots"+ File.separator + date+"_image.png";
+        try(FileOutputStream fileOutputStream = new FileOutputStream(path)){
+            fileOutputStream.write(screenshot);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-
-    /**
-     *
-     * @param name screenshot name
-     * @return path to the screenshot
-     */
     public static String getScreenshot(String name) {
-        //adding date and time to screenshot name
-        name = new Date().toString().replace(" ", "_").replace(":", "-") + "_" + name;        //name = LocalDateTime.now() + "_" + name;
+        //adding date and time to screenshot name, to make screenshot unique
+        name = new Date().toString().replace(" ", "_").replace(":", "-") + "_" + name;
         //where we gonna store a screenshot
         String path = "";
+
         if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-            path = System.getProperty("user.dir") + "/test-output/screenshots/" + name + ".png";
+
         } else {
             path = System.getProperty("user.dir") + "\\test-output\\screenshots\\" + name + ".png";
         }
-        System.out.println("OS name: "+System.getProperty("os.name"));
+
+        System.out.println("OS name: " + System.getProperty("os.name"));
         System.out.println("Screenshot is here: " + path);
         //since our reference type is a WebDriver
         //we cannot see methods from TakesScreenshot interface
@@ -107,6 +116,9 @@ public class BrowserUtils {
         }
         return path;
     }
+
+
+
 
 
 
