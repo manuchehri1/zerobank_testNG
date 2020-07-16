@@ -73,17 +73,32 @@ public class BrowserUtils {
     public static void scrollTo(WebElement element) {
         ((JavascriptExecutor) Driver.getDriver()).executeScript("arguments[0].scrollIntoView(true);", element);
     }
-    public static void takeScreenshot(){
-        //  since our reference type  web driver is
+    public static void takeScreenshot(String name){
+
+        //  since our reference type  web driver we can not reach methods of ScreenShot interface
+        // that why we will cast out web driver to screenshot interface
         TakesScreenshot takesScreenshot = (TakesScreenshot) Driver.getDriver();
-        byte[] screenshot = takesScreenshot.getScreenshotAs(OutputType.BYTES);
+
+        File source = takesScreenshot.getScreenshotAs(OutputType.FILE);
+
+        //byte[] screenshot = takesScreenshot.getScreenshotAs(OutputType.BYTES);
+
         Date date = new Date();
-        String path = System.getProperty("user.dir") + File.separator + "screenshots"+ File.separator + date+"_image.png";
-        try(FileOutputStream fileOutputStream = new FileOutputStream(path)){
-            fileOutputStream.write(screenshot);
+
+        String path = System.getProperty("user.dir") + File.separator + "test-output"+File.separator+ "screenshots"+ File.separator + date+name+".png";
+        File destination = new File(path);
+
+        try {
+            FileUtils.copyFile(source,destination);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+//        try(FileOutputStream fileOutputStream = new FileOutputStream(path)){
+//            fileOutputStream.write(screenshot);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public static String getScreenshot(String name) {

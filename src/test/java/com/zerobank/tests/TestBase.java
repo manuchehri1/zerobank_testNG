@@ -1,10 +1,12 @@
 package com.zerobank.tests;
 
+import com.zerobank.utilities.BrowserUtils;
 import com.zerobank.utilities.ConfigurationReader;
 import com.zerobank.utilities.Driver;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
@@ -30,7 +32,11 @@ public class TestBase {
 
 
     @AfterMethod
-    public void tearDown(){
+    public void tearDown(ITestResult testResult){
+
+        if (testResult.getStatus()== ITestResult.FAILURE){
+            BrowserUtils.takeScreenshot(testResult.getName());
+        }
 
 
         driver.quit();
